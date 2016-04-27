@@ -27,7 +27,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', routes);
 app.use('/users', users);
 app.use('/points', points);
-app.use('/trees', trees);
+//app.use('/trees', trees);
 app.use('/zones', zones);
 
 // catch 404 and forward to error handler
