@@ -23,6 +23,10 @@ router.get('/:schema/:table', function(req, res) {
         query.on('row', function(row) {
             results.push(row);
         });
+        query.on('error', function(err){
+            console.log(err);
+            done();
+        });
         // After all data is returned, close connection and return results
         query.on('end', function() {
             done();
