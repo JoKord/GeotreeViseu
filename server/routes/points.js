@@ -5,7 +5,7 @@ var path = require('path');
 var connString = require(path.join(__dirname, '../', '../', 'config'));
 var GeoJSON = require('geojson');
 
-router.get('/:schema/:table', function(req, res) {
+router.get('/:schema/:table', function(req, res, next) {
     var results = [];
     var schema = req.params.schema;
     var table = req.params.table;
@@ -13,8 +13,9 @@ router.get('/:schema/:table', function(req, res) {
     pg.connect(connString, function(err, client, done) {
         // Handle connection errors
         if(err) {
+          console.log("Error in Connection...");
           done();
-          console.log(err);
+          next(err);
           return res.status(500).json({ success: false, data: err});
         }
         // SQL Query > Select Data
@@ -24,10 +25,9 @@ router.get('/:schema/:table', function(req, res) {
             results.push(row);
         });
         query.on('error', function(err){
-            console.log(err);
-            done();
+            return next(new Error("ERROR IN QUERY..!"));
         });
-        // After all data is returned, close connection and return results
+        //// After all data is returned, close connection and return results
         query.on('end', function() {
             done();
             return res.json(GeoJSON.parse(results, {Point: ['x', 'y']}));
