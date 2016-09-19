@@ -25,7 +25,9 @@ router.get('/:schema/:table', function(req, res, next) {
             results.push(row);
         });
         query.on('error', function(err){
-            return next(new Error("ERROR IN QUERY..!"));
+            var qError = new Error("An error has ocurred in the query..! (" + err.message + ")");
+            qError.status = 500;
+            return next(qError);
         });
         //// After all data is returned, close connection and return results
         query.on('end', function() {

@@ -13,8 +13,13 @@ var zones = require('./server/routes/zone');
 
 var app = express();
 
+var hbs = exphbs.create({ 
+  defaultLayout: 'main', 
+  layoutsDir: path.join(__dirname, 'client', 'views', 'layouts')
+});
+
 // view engine setup
-app.engine('handlebars', exphbs({ defaultLayout: 'main',layoutsDir: path.join(__dirname, 'client','views','layouts')})); 
+app.engine('handlebars', hbs.engine); 
 app.set('views', path.join(__dirname, 'client', 'views'));
 app.set('view engine', 'handlebars');
 
@@ -24,7 +29,7 @@ app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'client', 'public')));
 
 app.use('/', routes);
 app.use('/users', users);
@@ -56,7 +61,9 @@ if (app.get('env') === 'development') {
     console.log("Reached Here.!");
     res.status(err.status || 500);
     res.render('error', {
+      layout: 'error',
       message: err.message,
+      status: err.status,
       error: err
     });
   });
